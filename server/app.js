@@ -1,19 +1,17 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const allowCrossDomain = require('./modules/allowCrossDomain')
+const routes = require('./routes')
 
 const app = express()
 
+const PORT = 8081
+
 app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: false }))
 app.use(allowCrossDomain)
+app.use(routes)
 
-app.post('/login', (req, res, next) => {
-  console.log(req.body)
-  res.json({
-    data: 'You, have successfully logged in!'
-  })
-  res.sendStatus(200)
-  next()
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`)
 })
-
-app.listen(process.env.PORT || 8081)

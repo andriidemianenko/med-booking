@@ -8,7 +8,7 @@
   </form>
 </template>
 <script>
-import axios from 'axios'
+import api from '@/services/api.js'
 
 export default {
   name: 'LogIn',
@@ -22,8 +22,8 @@ export default {
     login () {
       const username = btoa(this.username)
       const password = btoa(this.password)
-      axios
-        .post(`http://localhost:8081/login`, { username, password }, {
+      api()
+        .post(`/login`, { username, password }, {
           headers: {
             'Content-Type': 'application/json'
           }

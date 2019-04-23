@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import postServices from '@/services/postServices'
-
 export default {
   name: 'AuthPage',
   data () {
