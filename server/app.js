@@ -7,8 +7,13 @@ const app = express()
 app.use(bodyParser.json())
 app.use(allowCrossDomain)
 
-app.get('/', (req, res) => {
-  res.json({ message: 'hello!' })
+app.post('/login', (req, res, next) => {
+  console.log(req.body)
+  res.json({
+    data: 'You, have successfully logged in!'
+  })
+  res.sendStatus(200)
+  next()
 })
 
 app.listen(process.env.PORT || 8081)
