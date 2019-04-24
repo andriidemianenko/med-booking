@@ -6,7 +6,8 @@ const jwt = require('jsonwebtoken')
 const Patient = require('./models/patient')
 const Doctor = require('./models/doctor')
 
-const salt = 'secretPhrase'
+const salt = 'secretSalt'
+const secret = 'secretJWT'
 
 const sha512 = password => {
   const hash = crypto.createHmac('sha512', salt)
@@ -16,13 +17,32 @@ const sha512 = password => {
 }
 
 router.post('/login', async (req, res) => {
-  console.log(req.body)
   const incPassword = sha512(req.body.password)
-  await res.status(200).json({
-    data: {
-      message: 'You, have successfully logged in!'
+  let user = await Doctor.findOne({ email: req.body.email }) || Patient.findOne({ email: req.body.email })
+  if (user) {
+    if (user.password === incPassword) {
+      const JWToken = jwt.sign({
+        email: user.email,
+        _id: user._id
+      },
+      secret,
+      {
+        expiresIn: '4m'
+      })
+      await res.status(200).append('auth_token', JWToken).json({
+        message: 'welcome back',
+        auth_token: JWToken
+      })
+    } else {
+      await res.status(401).json({
+        message: 'Invalid password!'
+      })
     }
-  })
+  } else {
+    await res.status(401).json({
+      message: 'This email does not exits!'
+    })
+  }
 })
 router.post('/register', async (req, res) => {
   console.log(req.body)
@@ -47,12 +67,18 @@ router.post('/register', async (req, res) => {
       password: password
     })
   }
-  await account.save()
-  res.status(200).json({
-    data: {
-      message: 'You, have successfully registered!'
-    }
-  })
+  try {
+    await account.save()
+    res.status(200).json({
+      message: 'You, have successfully registered!',
+      register_success: true
+    })
+  } catch (err) {
+    await res.status(400).json({
+      message: 'Failed registration',
+      register_success: false
+    })
+  }
 })
 
 module.exports = router

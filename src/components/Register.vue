@@ -5,8 +5,8 @@
     <input type="checkbox" name="doctor" v-model="userAccount.doctor">I am a doctor<br>
   </form>
   <form class="auth-form f-dir-col" @submit.prevent="register" v-else>
-    <label>Username:</label>
-    <input type="text" v-model="username" required>
+    <label>Email:</label>
+    <input type="email" v-model="email" required>
     <br>
     <label>Password:</label>
     <input type="password" v-model="password" required>
@@ -40,7 +40,7 @@ export default {
   name: 'Register',
   data () {
     return {
-      username: '',
+      email: '',
       password: '',
       confirmPass: '',
       name: '',
@@ -56,8 +56,8 @@ export default {
   },
   methods: {
     register () {
-      const patientSignUpData = { 
-        username: this.username,
+      const patientSignUpData = {
+        email: this.email,
         password: this.password,
         name: this.name,
         secondName: this.secondName,
@@ -66,7 +66,7 @@ export default {
         doctor: false
       }
       const doctorSignUpData = {
-        username: this.username,
+        email: this.email,
         password: this.password,
         name: this.name,
         secondName: this.secondName,

@@ -1,7 +1,7 @@
 <template>
   <form class="auth-form f-dir-col" @submit.prevent="login">
-    <label>Username:</label>
-    <input type="text" v-model="username" required><br/>
+    <label>Email:</label>
+    <input type="email" v-model="email" required><br/>
     <label>Password:</label>
     <input type="password" v-model="password" required><br/>
     <button type="submit">Log In</button>
@@ -14,14 +14,14 @@ export default {
   name: 'LogIn',
   data () {
     return {
-      username: '',
+      email: '',
       password: ''
     }
   },
   methods: {
     login () {
       const userAuthData = {
-        username: this.username,
+        email: this.email,
         password: this.password
       }
       api()
@@ -31,7 +31,7 @@ export default {
           }
         })
         .then(({ data }) => {
-          console.log(data)
+          localStorage.setItem('auth_token', data.auth_token)
         })
     }
   }
