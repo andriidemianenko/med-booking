@@ -1,18 +1,18 @@
 const express = require('express')
 const router = express.Router()
 
-router.post('/login', (req, res) => {
-  res.status(200).json({
+router.post('/login', async (req, res) => {
+  await res.status(200).json({
     data: {
       message: 'You, have successfully logged in!'
     }
   })
 })
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   console.log(req.body)
-  res.status(200).json({
+  await res.status(200).json({
     data: {
-      message: 'You, have successfully registered in!'
+      message: 'You, have successfully registered!'
     }
   })
 })
