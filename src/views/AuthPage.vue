@@ -25,7 +25,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 .auth-container {
   display: flex;
   width: 100%;

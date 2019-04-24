@@ -3,7 +3,7 @@
     <label>Username:</label>
     <input type="text" v-model="username" required><br/>
     <label>Password:</label>
-    <input type="text" v-model="password" required><br/>
+    <input type="password" v-model="password" required><br/>
     <button type="submit">Log In</button>
   </form>
 </template>
@@ -20,10 +20,12 @@ export default {
   },
   methods: {
     login () {
-      const username = btoa(this.username)
-      const password = btoa(this.password)
+      const userAuthData = {
+        username: this.username,
+        password: this.password
+      }
       api()
-        .post(`/login`, { username, password }, {
+        .post(`/login`, userAuthData, {
           headers: {
             'Content-Type': 'application/json'
           }
