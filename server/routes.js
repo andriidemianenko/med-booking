@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 
 const Patient = require('./models/patient')
 const Doctor = require('./models/doctor')
+const authCheck = require('./modules/authCheck')
 
 const salt = 'secretSalt'
 const secret = 'secretJWT'
@@ -15,10 +16,9 @@ const sha512 = password => {
   const value = hash.digest('hex')
   return value
 }
-
 router.post('/login', async (req, res) => {
   const incPassword = sha512(req.body.password)
-  let user = await Doctor.findOne({ email: req.body.email }) || Patient.findOne({ email: req.body.email })
+  let user = (await Doctor.findOne({ email: req.body.email })) || (await Patient.findOne({ email: req.body.email }))
   if (user) {
     if (user.password === incPassword) {
       const JWToken = jwt.sign({
@@ -40,12 +40,11 @@ router.post('/login', async (req, res) => {
     }
   } else {
     await res.status(401).json({
-      message: 'This email does not exits!'
+      message: 'This email does not exist!'
     })
   }
 })
 router.post('/register', async (req, res) => {
-  console.log(req.body)
   let account = null
   const password = sha512(req.body.password)
   if (req.body.doctor) {
@@ -80,5 +79,9 @@ router.post('/register', async (req, res) => {
     })
   }
 })
-
+router.get(`/zalupa`, authCheck, (req, res) => {
+  res.json({
+    message: 'zalupa'
+  })
+})
 module.exports = router

@@ -1,12 +1,14 @@
 <template>
-  <div class="auth-container f-justify-center f-dir-col f-align-center">
-    <h1>Welcome, please authorize!</h1>
-    <div class="form-container">
-      <router-view></router-view>
-    </div>
-    <router-link to="/register">Dont't have account? Register!</router-link>
-    <router-link to="/login">Already have account? Login!</router-link>
-  </div>
+  <v-layout align-center justify-center>
+    <v-flex xs12 sm8 md4>
+        <h1 class="f-justify-center">Welcome, please authorize!</h1>
+        <router-view></router-view>
+        <div class="f-justify-center">
+          <v-btn to="/register">Dont't have account? Register!</v-btn>
+          <v-btn to="/login">Already have account? Login!</v-btn>
+        </div>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -17,28 +19,12 @@ export default {
       msg: ''
     }
   },
-  methods: {
-    
-  },
-  created () {
-
-  }
+  methods: {},
+  created () {}
 }
 </script>
-<style>
-.auth-container {
-  display: flex;
-  width: 100%;
-  height: 90vh;
-}
-.form-container {
-  width: 30%;
-  height: auto;
-  padding: 10px;
-  border: 1px solid #000;
-}
-.auth-form {
-  display: flex;
+<style scoped>
+.f-justify-center {
+  text-align: center;
 }
 </style>
-

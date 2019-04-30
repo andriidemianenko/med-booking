@@ -1,30 +1,47 @@
 <template>
-  <form class="auth-form f-dir-col" @submit.prevent="login">
-    <label>Email:</label>
-    <input type="email" v-model="email" required><br/>
-    <label>Password:</label>
-    <input type="password" v-model="password" required><br/>
-    <button type="submit">Log In</button>
-  </form>
+  <v-card class="elevation-12">
+    <v-toolbar dark color="primary">
+      <v-toolbar-title>Login form</v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-toolbar>
+    <v-card-text>
+      <v-form>
+        <v-text-field prepend-icon="person" name="Email" label="Email" v-model="email" type="email"></v-text-field>
+        <v-text-field
+          id="password"
+          prepend-icon="lock"
+          name="password"
+          v-model="password"
+          label="Password"
+          type="password"
+        ></v-text-field>
+      </v-form>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" @click="login">Login</v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 <script>
-import api from '@/services/api.js'
+import axios from 'axios'
 
 export default {
-  name: 'LogIn',
-  data () {
+  name: "LogIn",
+  data() {
     return {
       email: '',
       password: ''
     }
   },
   methods: {
-    login () {
+    login() {
       const userAuthData = {
         email: this.email,
         password: this.password
       }
-      api()
+      this.$validator.validateAll()
+      axios
         .post(`/login`, userAuthData, {
           headers: {
             'Content-Type': 'application/json'

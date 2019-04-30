@@ -7,9 +7,9 @@ const app = express()
 
 const PORT = 8081
 
+app.use(allowCrossDomain)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(allowCrossDomain)
 app.use(routes)
 
 app.listen(PORT, () => {
