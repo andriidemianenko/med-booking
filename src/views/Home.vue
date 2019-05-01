@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-    <v-navigation-drawer absolute permanent>
+    <v-navigation-drawer dark :clipped="clipped" app enable-resize-watcher v-model="drawer">
       <v-list class="pa-1">
         <v-list-tile avatar>
           <v-list-tile-avatar>
@@ -26,6 +26,14 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <v-toolbar fixed app :clipped-left="clipped">
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-title>{{ currentPage }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon>
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+    </v-toolbar>   
   </v-layout>
 </template>
 
@@ -37,6 +45,8 @@ export default {
   name: 'Home',
   data() {
     return {
+      clipped: false,
+      drawer: false,
       menuItems: [{
         title: 'Profile',
         icon: 'person',
@@ -55,11 +65,17 @@ export default {
     }
   },
   computed: {
-    profileData () { return this.$store.getters.getUserProfile }
+    profileData () { return this.$store.getters.getUserProfile },
+    currentPage () {
+      const currentRoute = this.$router.history.current.path
+      const pageRegExp = /[\s\S]*\/doctor|patient\/[\s\S]+?\/(\w*)?/
+      const currentPage = currentRoute.match(pageRegExp)[1]
+      return currentPage.charAt(0).toUpperCase() + currentPage.slice(1)
+    }
   },
   methods: {
     navigateTo (link) {
-      // this.$router.push(this.$router.history.current.path + link)
+      this.$router.push(this.$router.history.current.path + link)
     },
     fetchUserProfile () {
       const accountType = localStorage.getItem('accountType')
@@ -70,12 +86,13 @@ export default {
         this.$store.commit('setUserProfile', data.profileData)
       })
       .catch(err => {
-        console.log(err)
+        this.$router.push('/login')
       })
     }
   },
   created () {
     this.fetchUserProfile()
+    console.log(this.currentPage, 'paage')
   }
 }
 </script>

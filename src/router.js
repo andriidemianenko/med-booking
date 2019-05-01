@@ -4,6 +4,7 @@ import AuthPage from './views/AuthPage.vue'
 import LogIn from './components/LogIn.vue'
 import Register from './components/Register.vue'
 import Home from './views/Home.vue'
+import MeetingsList from './components/MeetingsList.vue'
 
 Vue.use(Router)
 
@@ -27,9 +28,15 @@ export default new Router({
       ]
     },
     {
-      path: '/:user/:userId/home',
+      path: '/:user/:userId',
       name: 'Home',
-      component: Home
+      component: Home,
+      children: [
+        {
+          path: 'meetings',
+          component: MeetingsList
+        }
+      ]
     }
   ]
 })

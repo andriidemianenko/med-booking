@@ -18,7 +18,6 @@ Vue.config.productionTip = false
 
 axios.interceptors.request.use((config) => {
   const authToken = localStorage.getItem('auth_token')
-  console.log(authToken, 'auth token')
   if (authToken) {
     config.headers.Authorization = authToken
   }
