@@ -53,7 +53,7 @@ export default {
           localStorage.setItem('auth_token', data.auth_token)
           localStorage.setItem('userId', userId)
           localStorage.setItem('accountType', accountType)
-          this.$router.push(`/${accountType}/${userId}`)
+          this.$router.push(`/${accountType}/${userId}/calendar`)
         })
     }
   }

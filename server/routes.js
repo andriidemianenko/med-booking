@@ -82,7 +82,7 @@ router.post('/register', async (req, res) => {
     })
   }
 })
-router.get('/:user/:userId/home', authCheck, async (req, res) => {
+router.get('/:user/:userId/userData', authCheck, async (req, res) => {
   const accountType = req.params.user
   const userId = req.params.userId
   try {

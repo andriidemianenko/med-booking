@@ -33,7 +33,12 @@
         <v-btn icon>
           <v-icon>more_vert</v-icon>
         </v-btn>
-    </v-toolbar>   
+    </v-toolbar>
+    <v-content>
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-content>
   </v-layout>
 </template>
 
@@ -53,8 +58,13 @@ export default {
         link: '/profile'
       },
       {
-        title: 'Your Meetings',
+        title: 'Calendar',
         icon: 'date_range',
+        link: '/calendar'
+      },
+      {
+        title: 'Your Meetings',
+        icon: 'list',
         link: '/meetings'
       },
       {
@@ -69,8 +79,12 @@ export default {
     currentPage () {
       const currentRoute = this.$router.history.current.path
       const pageRegExp = /[\s\S]*\/doctor|patient\/[\s\S]+?\/(\w*)?/
-      const currentPage = currentRoute.match(pageRegExp)[1]
-      return currentPage.charAt(0).toUpperCase() + currentPage.slice(1)
+      const currentPage = currentRoute.match(pageRegExp)
+      if (currentPage) {
+        return currentPage[1].charAt(0).toUpperCase() + currentPage[1].slice(1)
+      } else {
+        return ''
+      }
     }
   },
   methods: {
@@ -81,18 +95,17 @@ export default {
       const accountType = localStorage.getItem('accountType')
       const userId = localStorage.getItem('userId')
       axios
-      .get(`/${accountType}/${userId}/home`)
-      .then(({ data }) => {
-        this.$store.commit('setUserProfile', data.profileData)
-      })
-      .catch(err => {
-        this.$router.push('/login')
-      })
+        .get(`/${accountType}/${userId}/userData`)
+        .then(({ data }) => {
+          this.$store.commit('setUserProfile', data.profileData)
+        })
+        .catch(err => {
+          this.$router.push('/login')
+        })
     }
   },
   created () {
     this.fetchUserProfile()
-    console.log(this.currentPage, 'paage')
   }
 }
 </script>

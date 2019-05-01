@@ -5,6 +5,9 @@ import LogIn from './components/LogIn.vue'
 import Register from './components/Register.vue'
 import Home from './views/Home.vue'
 import MeetingsList from './components/MeetingsList.vue'
+import Calendar from './components/Calendar.vue'
+import Profile from './components/Profile.vue'
+import DoctorsList from './components/DoctorsList.vue'
 
 Vue.use(Router)
 
@@ -35,6 +38,18 @@ export default new Router({
         {
           path: 'meetings',
           component: MeetingsList
+        },
+        {
+          path: 'calendar',
+          component: Calendar
+        },
+        {
+          path: 'profile',
+          component: Profile
+        },
+        {
+          path: 'doctors',
+          component: DoctorsList
         }
       ]
     }
