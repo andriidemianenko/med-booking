@@ -19,6 +19,7 @@ const sha512 = password => {
 router.post('/login', async (req, res) => {
   const incPassword = sha512(req.body.password)
   let user = (await Doctor.findOne({ email: req.body.email })) || (await Patient.findOne({ email: req.body.email }))
+  const account = user.qualification ? 'doctor' : 'patient'
   if (user) {
     if (user.password === incPassword) {
       const JWToken = jwt.sign({
@@ -27,10 +28,12 @@ router.post('/login', async (req, res) => {
       },
       secret,
       {
-        expiresIn: '4m'
+        expiresIn: '30m'
       })
       await res.status(200).append('auth_token', JWToken).json({
         message: 'welcome back',
+        account,
+        _id: user._id,
         auth_token: JWToken
       })
     } else {
@@ -79,9 +82,25 @@ router.post('/register', async (req, res) => {
     })
   }
 })
-router.get(`/zalupa`, authCheck, (req, res) => {
-  res.json({
-    message: 'zalupa'
-  })
+router.get('/:user/:userId/home', authCheck, async (req, res) => {
+  const accountType = req.params.user
+  const userId = req.params.userId
+  try {
+    const user = accountType === 'doctor' ? (await Doctor.findOne({ _id: userId })) : (await Patient.findOne({ _id: userId }))
+    res.json({
+      profileData: {
+        email: user.email,
+        name: user.name,
+        secondName: user.second_name,
+        phoneNumber: user.phone_number,
+        cardNumber: user.card_number,
+        qualification: user.qualification
+      }
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: 'Ooops! Something went wrong...'
+    })
+  }
 })
 module.exports = router

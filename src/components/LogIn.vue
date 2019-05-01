@@ -27,7 +27,7 @@
 import axios from 'axios'
 
 export default {
-  name: "LogIn",
+  name: 'LogIn',
   data() {
     return {
       email: '',
@@ -48,7 +48,12 @@ export default {
           }
         })
         .then(({ data }) => {
+          const userId = data._id
+          const accountType = data.account
           localStorage.setItem('auth_token', data.auth_token)
+          localStorage.setItem('userId', userId)
+          localStorage.setItem('accountType', accountType)
+          this.$router.push(`/${accountType}/${userId}/home`)
         })
     }
   }
