@@ -1,14 +1,17 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const allowCrossDomain = require('./modules/allowCrossDomain')
+const routes = require('./routes')
 
 const app = express()
 
-app.use(bodyParser.json())
+const PORT = 8081
+
 app.use(allowCrossDomain)
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(routes)
 
-app.get('/', (req, res) => {
-  res.json({ message: 'hello!' })
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`)
 })
-
-app.listen(process.env.PORT || 8081)

@@ -1,32 +1,99 @@
 <template>
-  <div class="main-container">
-    <h1>{{ msg }}</h1>
-  </div>
+  <v-layout wrap>
+    <v-navigation-drawer dark :clipped="clipped" app enable-resize-watcher v-model="drawer">
+      <v-list class="pa-1">
+        <v-list-tile avatar>
+          <v-list-tile-avatar>
+            <img src="https://randomuser.me/api/portraits/men/85.jpg">
+          </v-list-tile-avatar>
+
+          <v-list-tile-content>
+            <v-list-tile-title>{{ profileData.name }} {{ profileData.secondName }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+
+      <v-list class="pt-0" dense>
+        <v-divider></v-divider>
+
+        <v-list-tile v-for="item in menuItems" :key="item.title" @click="navigateTo(item.link)">
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+    <v-toolbar fixed app :clipped-left="clipped">
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+        <v-toolbar-title>{{ currentPage }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon>
+          <v-icon>more_vert</v-icon>
+        </v-btn>
+    </v-toolbar>   
+  </v-layout>
 </template>
 
 <script>
-import postServices from '@/services/postServices'
+import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
-  data () {
+  data() {
     return {
-      msg: ''
+      clipped: false,
+      drawer: false,
+      menuItems: [{
+        title: 'Profile',
+        icon: 'person',
+        link: '/profile'
+      },
+      {
+        title: 'Your Meetings',
+        icon: 'date_range',
+        link: '/meetings'
+      },
+      {
+        title: 'List of Doctors',
+        icon: 'how_to_reg',
+        link: '/doctors'
+      }]
+    }
+  },
+  computed: {
+    profileData () { return this.$store.getters.getUserProfile },
+    currentPage () {
+      const currentRoute = this.$router.history.current.path
+      const pageRegExp = /[\s\S]*\/doctor|patient\/[\s\S]+?\/(\w*)?/
+      const currentPage = currentRoute.match(pageRegExp)[1]
+      return currentPage.charAt(0).toUpperCase() + currentPage.slice(1)
     }
   },
   methods: {
-    getData () {
-      postServices.fetchData()
-        .then(({ data }) => {
-          this.msg = data.message
-        })
-        .catch(err => {
-          console.log(err)
-        })
+    navigateTo (link) {
+      this.$router.push(this.$router.history.current.path + link)
+    },
+    fetchUserProfile () {
+      const accountType = localStorage.getItem('accountType')
+      const userId = localStorage.getItem('userId')
+      axios
+      .get(`/${accountType}/${userId}/home`)
+      .then(({ data }) => {
+        this.$store.commit('setUserProfile', data.profileData)
+      })
+      .catch(err => {
+        this.$router.push('/login')
+      })
     }
   },
   created () {
-    this.getData()
+    this.fetchUserProfile()
+    console.log(this.currentPage, 'paage')
   }
 }
 </script>
+
