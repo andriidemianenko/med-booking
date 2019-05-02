@@ -55,27 +55,29 @@ export default {
       menuItems: [{
         title: 'Profile',
         icon: 'person',
-        link: '/profile'
+        link: 'profile'
       },
       {
         title: 'Calendar',
         icon: 'date_range',
-        link: '/calendar'
+        link: 'calendar'
       },
       {
         title: 'Your Meetings',
         icon: 'list',
-        link: '/meetings'
+        link: 'meetings'
       },
       {
         title: 'List of Doctors',
         icon: 'how_to_reg',
-        link: '/doctors'
+        link: 'doctors'
       }]
     }
   },
   computed: {
     profileData () { return this.$store.getters.getUserProfile },
+    accountType () { return localStorage.getItem('accountType') },
+    userId () { return localStorage.getItem('userId') },
     currentPage () {
       const currentRoute = this.$router.history.current.path
       const pageRegExp = /[\s\S]*\/doctor|patient\/[\s\S]+?\/(\w*)?/
@@ -89,13 +91,11 @@ export default {
   },
   methods: {
     navigateTo (link) {
-      this.$router.push(this.$router.history.current.path + link)
+      this.$router.replace({ path: link})
     },
     fetchUserProfile () {
-      const accountType = localStorage.getItem('accountType')
-      const userId = localStorage.getItem('userId')
       axios
-        .get(`/${accountType}/${userId}/userData`)
+        .get(`/${this.accountType}/${this.userId}/userData`)
         .then(({ data }) => {
           this.$store.commit('setUserProfile', data.profileData)
         })
