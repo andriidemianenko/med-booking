@@ -30,9 +30,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>{{ currentPage }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+        <v-btn>LOGOUT</v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid>
@@ -51,6 +49,7 @@ export default {
     return {
       clipped: false,
       drawer: false,
+      pageTitle: '',
       menuItems: [{
         title: 'Profile',
         icon: 'person',
@@ -84,20 +83,19 @@ export default {
       }
     },
     userId () { return localStorage.getItem('userId') },
-    currentPage () {
-      const currentRoute = this.$router.history.current.path
-      const pageRegExp = /[\s\S]*\/doctor|patient\/[\s\S]+?\/(\w*)?/
-      const currentPage = currentRoute.match(pageRegExp)
-      if (currentPage) {
-        return currentPage[1].charAt(0).toUpperCase() + currentPage[1].slice(1)
-      } else {
-        return ''
+    currentPage: {
+      get: function () {
+        return  this.pageTitle
+      },
+      set: function (newVal) {
+        this.pageTitle = newVal.charAt(0).toUpperCase() + newVal.slice(1)
       }
     }
   },
   methods: {
     navigateTo (link) {
-      this.$router.replace({ path: link})
+      this.$router.replace({ path: link })
+      this.currentPage = link
     },
     fetchUserProfile () {
       axios
@@ -110,10 +108,30 @@ export default {
         .catch(err => {
           this.$router.push('/login')
         })
+    },
+    fetchDoctorsList () {
+      axios.get(`/doctors`)
+        .then(({ data }) => {
+          this.$store.commit('setDoctorsList', data.doctors)
+        })
+    },
+    logout () {
+      localStorage.removeItem('accountType')
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('userId')
+      this.$router.push('/login')
+    },
+    setPageTitle () {
+      const currentRoute = this.$router.history.current.path
+      const pageRegExp = /[\s\S]*\/(doctor|patient)\/[\s\S]+?\/(\w*)?/
+      const currentPage = currentRoute.match(pageRegExp)[2]
+      this.currentPage = currentPage ? currentPage : ''
     }
   },
   created () {
+    this.setPageTitle()
     this.fetchUserProfile()
+    this.fetchDoctorsList()
   }
 }
 </script>

@@ -12,11 +12,20 @@ const store = new Vuex.Store({
   getters: {
     getMeetings: state => state.meetings,
     getUserProfile: state => state.userProfile,
-    getDoctors: state => state.doctors
+    getDoctorsList: state => state.doctors
   },
   mutations: {
     setUserProfile: (state, payload) => {
       state.userProfile = payload
+    },
+    setUserMeetings: (state, meetings) => {
+      state.meetings = meetings
+    },
+    setDoctorsList: (state, doctors) => {
+      state.doctors = doctors
+    },
+    addMeeting: (state, meeting) => {
+      state.meetings.push(meeting)
     }
   },
   actions: {

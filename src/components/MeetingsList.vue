@@ -7,7 +7,7 @@
       <meeting-editor></meeting-editor>
     </v-dialog>
     <v-container>
-      <v-list two-line>
+      <v-list two-line v-if="meetings.length">
         <template v-for="meeting in meetings">
           <!-- <v-divider v-else-if="item.divider" :key="index" :inset="item.inset"></v-divider> -->
           <v-list-tile :key="meeting.id" avatar @click>
@@ -16,8 +16,8 @@
             </v-list-tile-avatar>
 
             <v-list-tile-content>
-              <v-list-tile-title>{{ meeting.doctorName }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.startsAt }}, {{ meeting.cabinetNo }}</v-list-tile-sub-title>
+              <v-list-tile-title>{{ userProfileData.accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</v-list-tile-title>
+              <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}, {{ meeting.cabinetNo }}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -28,30 +28,33 @@
 
 <script>
 import MeetingEditor from './MeetingEditor.vue'
+import axios from 'axios';
 
 export default {
   components: { MeetingEditor },
   data() {
     return {
       editor: false,
-      meetings: [
-        {
-          doctorName: "Andrei Demianenko",
-          date: "12-02-2019",
-          startsAt: "16:40",
-          id: "123asd",
-          cabinetNo: "323"
-        },
-        {
-          doctorName: "Alexander Smeshko",
-          date: "15-03-2019",
-          startsAt: "13:40",
-          id: "234sad",
-          cabinetNo: "424"
-        }
-      ]
-    };
+      meetings: []
+    }
+  },
+  computed: {
+    userProfileData () { return this.$store.getters.getUserProfile },
+    userId () { return localStorage.getItem('userId') },
+  },
+  methods: {
+    fetchMeetings () {
+      axios
+        .get(`/${this.userProfileData.accountType}/${this.userId}/meetings`)
+        .then(({ data }) => {
+          this.$store.commit('setUserMeetings', data.meetings)
+          this.meetings = data.meetings
+        })
+    }
+  },
+  mounted () {
+    this.fetchMeetings()
   }
-};
+}
 </script>
 

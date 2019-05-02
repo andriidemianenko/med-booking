@@ -20,6 +20,7 @@
               :items="doctorsNames"
               label="Doctor*"
               v-model="doctorName"
+              required
             ></v-autocomplete>
           </v-flex>
         </v-layout>
@@ -40,8 +41,6 @@ export default {
   name: 'MeetingEditor',
   data() {
     return {
-      doctorsNames: [],
-      doctors: [],
       doctorName: '',
       date: '',
       cabinetNo: 0,
@@ -50,41 +49,33 @@ export default {
   },
   computed: {
     userProfileData () { return this.$store.getters.getUserProfile },
-    userId () { return localStorage.getItem('userId') }
+    userId () { return localStorage.getItem('userId') },
+    doctors () { return this.$store.getters.getDoctorsList },
+    doctorsNames () { return this.doctors.map(doctor => `${doctor.name} ${doctor.second_name}`) }
   },
   methods: {
-    fetchDoctorsList () {
-      axios.get(`/doctors`)
-        .then(({ data }) => {
-          this.doctorsNames = data.doctors.map(doctor => `${doctor.name} ${doctor.second_name}`)
-          this.doctors = data.doctors
-        })
-    },
     addNewMeeting () {
       for (let doctor of this.doctors) {
         if (`${doctor.name} ${doctor.second_name}` === this.doctorName.trim()) {
-          console.log(this.userProfileData)
           axios
             .post(`/meetings`, {
-              doctorName: this.doctorName.trim(),
-              patientName: `${this.userProfileData.name} ${this.userProfileData.secondName}`,
+              doctor_name: this.doctorName.trim(),
+              patient_name: `${this.userProfileData.name} ${this.userProfileData.secondName}`,
               cabinetNo: this.cabinetNo,
               date: this.date,
               time: this.time,
-              doctorId: doctor._id,
-              patientId: this.userId
+              doctor_id: doctor._id,
+              patient_id: this.userId
             })
             .then(({ data }) => {
-              console.log(data)
+              this.$store.commit('addMeeting', data.meeting)
             })
             break
         }
       }
     }
   },
-  created() {
-    this.fetchDoctorsList()
-  }
+  created() {}
 }
 </script>
 
