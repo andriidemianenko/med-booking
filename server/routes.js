@@ -99,7 +99,18 @@ router.get('/:user/:userId/userData', authCheck, async (req, res) => {
     })
   } catch (err) {
     res.status(500).json({
-      message: 'Ooops! Something went wrong...'
+      message: `Ooops! Something went wrong...\n${err}`
+    })
+  }
+})
+
+router.get('/doctors', authCheck, async (req, res) => {
+  try {
+    const doctors = await Doctor.find()
+    res.json({ doctors })
+  } catch (err) {
+    res.status(500).json({
+      message: `Ooops! Something went wrong...\n${err}`
     })
   }
 })

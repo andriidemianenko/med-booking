@@ -16,7 +16,7 @@
       <v-list class="pt-0" dense>
         <v-divider></v-divider>
 
-        <v-list-tile v-for="item in menuItems" :key="item.title" @click="navigateTo(item.link)">
+        <v-list-tile v-for="item in filteredMenuItems" :key="item.title" @click="navigateTo(item.link)">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
@@ -44,7 +44,6 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'Home',
@@ -77,6 +76,13 @@ export default {
   computed: {
     profileData () { return this.$store.getters.getUserProfile },
     accountType () { return localStorage.getItem('accountType') },
+    filteredMenuItems () {
+      if (this.profileData.accountType === 'doctor') {
+        return this.menuItems.filter(menuItem => menuItem.title !== 'List of Doctors')
+      } else {
+        return this.menuItems
+      }
+    },
     userId () { return localStorage.getItem('userId') },
     currentPage () {
       const currentRoute = this.$router.history.current.path
@@ -97,6 +103,8 @@ export default {
       axios
         .get(`/${this.accountType}/${this.userId}/userData`)
         .then(({ data }) => {
+          let profileData = data.profileData
+          profileData.accountType = profileData.qualification ? 'doctor' : 'patient' 
           this.$store.commit('setUserProfile', data.profileData)
         })
         .catch(err => {
