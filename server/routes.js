@@ -114,4 +114,8 @@ router.get('/doctors', authCheck, async (req, res) => {
     })
   }
 })
+
+router.post('/meetings', authCheck, async (req, res) => {
+  console.log(req.body)
+})
 module.exports = router
