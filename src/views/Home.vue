@@ -30,7 +30,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>{{ currentPage }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn @click="logout">LOGOUT</v-btn>
+        <v-btn @click="logout" color="primary">LOGOUT</v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid>

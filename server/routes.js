@@ -150,12 +150,12 @@ router.get('/:user/:userId/meetings', async (req, res) => {
   }
 })
 
-router.delete('/:user/:userId/meetings', async (req, res) => {
+router.delete('/delete/meeting/:meetingId', async (req, res) => {
   try {
-    await Meeting.deleteOne({ _id: req.body.id })
+    await Meeting.deleteOne({ _id: req.params.meetingId })
     res.status(200).end()
   } catch (err) {
-    res.json({
+    res.status(500).json({
       message: `Ooops! Something went wrong...\n${err}`
     }).end()
   }

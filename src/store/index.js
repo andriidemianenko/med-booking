@@ -27,6 +27,9 @@ const store = new Vuex.Store({
     addMeeting: (state, meeting) => {
       state.meetings.push(meeting)
     },
+    cancelMeeting: (state, cancelMeetingId) => {
+      state.meetings = state.meetings.filter(meeting => meeting._id !== cancelMeetingId)
+    },
     clearData: (state) => {
       state.meetings = []
       state.doctors = []
