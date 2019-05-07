@@ -4,7 +4,7 @@
       <template v-slot:activator="{ on }">
         <v-btn color="green lighten-2" dark v-on="on">ADD NEW MEETING</v-btn>
       </template>
-      <meeting-editor></meeting-editor>
+      <meeting-editor @editor="close"></meeting-editor>
     </v-dialog>
     <v-container>
       <v-list two-line v-if="meetings.length">
@@ -17,7 +17,7 @@
 
             <v-list-tile-content>
               <v-list-tile-title>{{ userProfileData.accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}, {{ meeting.cabinetNo }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}, cabinet: {{ meeting.cabinetNo }}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -28,33 +28,25 @@
 
 <script>
 import MeetingEditor from './MeetingEditor.vue'
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
   components: { MeetingEditor },
   data() {
     return {
-      editor: false,
-      meetings: []
+      editor: false
     }
   },
   computed: {
     userProfileData () { return this.$store.getters.getUserProfile },
-    userId () { return localStorage.getItem('userId') },
+    meetings () { return this.$store.getters.getMeetings }
   },
   methods: {
-    fetchMeetings () {
-      axios
-        .get(`/${this.userProfileData.accountType}/${this.userId}/meetings`)
-        .then(({ data }) => {
-          this.$store.commit('setUserMeetings', data.meetings)
-          this.meetings = data.meetings
-        })
+    close (val) {
+      this.editor = val
     }
   },
-  mounted () {
-    this.fetchMeetings()
-  }
+  mounted () {}
 }
 </script>
 

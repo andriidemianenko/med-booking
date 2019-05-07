@@ -29,7 +29,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn flat @click="dialog = false">Close</v-btn>
+      <v-btn flat @click="closeEditor">Close</v-btn>
       <v-btn flat @click="addNewMeeting">Save</v-btn>
     </v-card-actions>
   </v-card>
@@ -69,10 +69,14 @@ export default {
             })
             .then(({ data }) => {
               this.$store.commit('addMeeting', data.meeting)
+              this.$emit('editor', false)
             })
             break
         }
       }
+    },
+    closeEditor () {
+      this.$emit('editor', false)
     }
   },
   created() {}

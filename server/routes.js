@@ -113,7 +113,7 @@ router.get('/doctors', authCheck, async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: `Ooops! Something went wrong...\n${err}`
-    })
+    }).end()
   }
 })
 
@@ -124,11 +124,11 @@ router.post('/meetings', authCheck, async (req, res) => {
     res.json({
       message: 'Your meeting was successfully created!',
       meeting: req.body
-    })
+    }).end()
   } catch (err) {
     res.status(500).json({
       message: `Ooops! Something went wrong...\n${err}`
-    })
+    }).end()
   }
 })
 
@@ -137,16 +137,27 @@ router.get('/:user/:userId/meetings', async (req, res) => {
     let meetings = null
     if (req.params.user === 'doctor') {
       meetings = await Meeting.find({ doctor_id: req.params.userId })
-      res.json({ meetings })
+      res.json({ meetings }).end()
     } else {
       meetings = await Meeting.find({ patient_id: req.params.userId })
-      res.json({ meetings })
+      res.json({ meetings }).end()
     }
   } catch (err) {
     res.json({
       message: `Ooops! Something went wrong...\n${err}`,
       meetings: []
-    })
+    }).end()
+  }
+})
+
+router.delete('/:user/:userId/meetings', async (req, res) => {
+  try {
+    await Meeting.deleteOne({ _id: req.body.id })
+    res.status(200).end()
+  } catch (err) {
+    res.json({
+      message: `Ooops! Something went wrong...\n${err}`
+    }).end()
   }
 })
 

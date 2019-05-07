@@ -26,6 +26,11 @@ const store = new Vuex.Store({
     },
     addMeeting: (state, meeting) => {
       state.meetings.push(meeting)
+    },
+    clearData: (state) => {
+      state.meetings = []
+      state.doctors = []
+      state.userProfile = {}
     }
   },
   actions: {

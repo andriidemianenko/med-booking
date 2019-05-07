@@ -30,7 +30,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
         <v-toolbar-title>{{ currentPage }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn>LOGOUT</v-btn>
+        <v-btn @click="logout">LOGOUT</v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid>
@@ -119,6 +119,7 @@ export default {
       localStorage.removeItem('accountType')
       localStorage.removeItem('auth_token')
       localStorage.removeItem('userId')
+      this.$store.commit('clearData')
       this.$router.push('/login')
     },
     setPageTitle () {
@@ -126,12 +127,20 @@ export default {
       const pageRegExp = /[\s\S]*\/(doctor|patient)\/[\s\S]+?\/(\w*)?/
       const currentPage = currentRoute.match(pageRegExp)[2]
       this.currentPage = currentPage ? currentPage : ''
+    },
+    fetchMeetings () {
+      axios
+        .get(`/${this.profileData.accountType}/${this.userId}/meetings`)
+        .then(({ data }) => {
+          this.$store.commit('setUserMeetings', data.meetings)
+        })
     }
   },
   created () {
     this.setPageTitle()
     this.fetchUserProfile()
     this.fetchDoctorsList()
+    this.fetchMeetings()
   }
 }
 </script>
