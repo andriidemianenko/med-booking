@@ -30,6 +30,12 @@ const store = new Vuex.Store({
     cancelMeeting: (state, cancelMeetingId) => {
       state.meetings = state.meetings.filter(meeting => meeting._id !== cancelMeetingId)
     },
+    updateProfile: (state, payload) => {
+      state.userProfile.name = payload.name
+      state.userProfile.secondName = payload.secondName
+      state.userProfile.cardNumber = payload.cardNumber
+      state.userProfile.phoneNumber = payload.phoneNumber
+    },
     clearData: (state) => {
       state.meetings = []
       state.doctors = []

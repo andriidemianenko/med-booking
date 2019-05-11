@@ -161,4 +161,29 @@ router.delete('/delete/meeting/:meetingId', async (req, res) => {
   }
 })
 
+router.post('/:user/:userId/update-profile', async (req, res) => {
+  let updatedProfile = null
+  try {
+    if (req.params.user === 'patient') {
+      updatedProfile = await Patient.updateOne({
+        name: req.body.name,
+        second_name: req.body.secondName,
+        card_number: req.body.cardNumber,
+        phone_number: req.body.phoneNumber
+      })
+    } else if (req.params === 'doctor') {
+      updatedProfile = await Patient.updateOne({
+        name: req.body.name,
+        second_name: req.body.secondName,
+        phone_number: req.body.phoneNumber
+      })
+    }
+    res.json({ updatedProfile }).end()
+  } catch (err) {
+    res.status(500).json({
+      message: `Ooops! Something went wrong...\n${err}`
+    }).end()
+  }
+})
+
 module.exports = router

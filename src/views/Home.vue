@@ -107,6 +107,7 @@ export default {
         })
         .catch(err => {
           this.$router.push('/login')
+          this.$store.commit('clearData')
         })
     },
     fetchDoctorsList () {

@@ -54,7 +54,6 @@ export default {
         .delete(`/delete/meeting/${meeting._id}`)
         .then(({ data }) => {
           this.$store.commit('cancelMeeting', meeting._id)
-          console.log(meeting._id, 'then')
         })
     }
   },

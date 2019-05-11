@@ -10,7 +10,8 @@
             <v-text-field label="Date*" type="text" v-model="date" required></v-text-field>
           </v-flex>
           <v-flex xs12>
-            <v-text-field label="Time*" type="text" v-model="time" required></v-text-field>
+            <!-- <v-text-field label="Time*" type="text" v-model="time" required></v-text-field> -->
+            <pick-time @time="changeTime"></pick-time>
           </v-flex>
           <v-flex xs12>
             <v-text-field label="Cabinet Number*" type="number" v-model="cabinetNo" required></v-text-field>
@@ -35,16 +36,18 @@
   </v-card>
 </template>
 <script>
-import axios from "axios";
+import axios from 'axios'
+import PickTime from './PickTime.vue'
 
 export default {
   name: 'MeetingEditor',
+  components: { PickTime },
   data() {
     return {
       doctorName: '',
       date: '',
       cabinetNo: 0,
-      time: ''
+      time: null
     }
   },
   computed: {
@@ -57,6 +60,7 @@ export default {
     addNewMeeting () {
       for (let doctor of this.doctors) {
         if (`${doctor.name} ${doctor.second_name}` === this.doctorName.trim()) {
+          console.log(this.time)
           axios
             .post(`/meetings`, {
               doctor_name: this.doctorName.trim(),
@@ -70,10 +74,20 @@ export default {
             .then(({ data }) => {
               this.$store.commit('addMeeting', data.meeting)
               this.$emit('editor', false)
+              this.clearEditor()
             })
             break
         }
       }
+    },
+    clearEditor () {
+      this.doctorName = '',
+      this.cabinetNo = 0,
+      this.date = '',
+      this.time = null
+    },
+    changeTime (val) {
+      this.time = val
     },
     closeEditor () {
       this.$emit('editor', false)

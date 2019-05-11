@@ -3,47 +3,75 @@
     <v-layout justify-space-between wrap>
       <v-flex xs5>
         <v-flex xs12>
-          <v-text-field v-model="name" label="Your Name"></v-text-field>
+          <v-text-field v-model="profileFields.name" label="Your Name"></v-text-field>
         </v-flex>
         <v-flex xs12>
-          <v-text-field v-model="secondName" label="Your Second Name"></v-text-field>
+          <v-text-field v-model="profileFields.secondName" label="Your Second Name"></v-text-field>
         </v-flex>
       </v-flex>
       <v-flex xs5>
         <v-flex xs12>
-          <v-text-field v-model="cardNumber" label="Your Card Number"></v-text-field>
+          <v-text-field v-model="profileFields.cardNumber" label="Your Card Number"></v-text-field>
         </v-flex>
         <v-flex xs12>
-          <v-text-field v-model="phoneNumber" label="Your Telephone Number"></v-text-field>
+          <v-text-field v-model="profileFields.phoneNumber" label="Your Telephone Number"></v-text-field>
         </v-flex>
       </v-flex>
     </v-layout>
     <v-layout justify-end>
-      <v-btn color="success" :disabled="changed">UPDATE</v-btn>
+      <v-btn color="success" :disabled="!changed" @click="updateProfile">UPDATE</v-btn>
     </v-layout>
   </v-container>
 </template>
 <script>
+import axios from 'axios'
+import { setTimeout } from 'timers';
+
 export default {
   data() {
     return {
-      name: '',
-      secondName: '',
-      cardNumber: 0,
-      phoneNumber: 0,
-      changed: true,
+      profileFields: {
+        name: '',
+        secondName: '',
+        cardNumber: 0,
+        phoneNumber: 0,
+      },
+      changed: false,
     }
   },
   computed: {
-    profileData () { return this.$store.getters.getUserProfile }
+    profileData () { return this.$store.getters.getUserProfile },
+    userId () { return localStorage.getItem('userId') }
+  },
+  watch: {
+    profileFields: {
+      handler (val) {
+        const currentProfile = this.profileData
+        const namesChanged = (val.name !== currentProfile.name || val.secondName !== currentProfile.secondName)
+        const cardOrPhoneChanged = (+val.cardNumber !== currentProfile.cardNumber || +val.phoneNumber !== currentProfile.phoneNumber)
+        if (namesChanged || cardOrPhoneChanged) {
+          this.changed = val.name && val.secondName && val.phoneNumber && val.cardNumber
+        } else {
+          this.changed = false
+        }
+      },
+      deep: true
+    }
   },
   methods: {
-    updateProfile() {},
+    updateProfile() {
+      axios
+        .post(`${this.profileData.accountType}/${this.userId}/update-profile`, { ...this.profileFields })
+        .then(({ data }) => {
+          this.$store.commit('updateProfile', { ...this.profileFields })
+          this.changed = false
+        })
+    },
     fetchProfileFields () {
-      this.name = this.profileData.name
-      this.secondName = this.profileData.secondName
-      this.cardNumber = this.profileData.cardNumber
-      this.phoneNumber = this.profileData.phoneNumber
+      this.profileFields.name = this.profileData.name
+      this.profileFields.secondName = this.profileData.secondName
+      this.profileFields.cardNumber = this.profileData.cardNumber
+      this.profileFields.phoneNumber = this.profileData.phoneNumber
     }
   },
   created () {

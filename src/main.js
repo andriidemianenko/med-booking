@@ -5,6 +5,7 @@ import store from './store/index'
 
 import Vuetify from 'vuetify'
 import VeeValidate from 'vee-validate'
+import Momentjs from 'moment'
 import 'vuetify/dist/vuetify.min.css'
 
 import axios from 'axios'
@@ -12,6 +13,7 @@ axios.defaults.baseURL = 'http://localhost:8081'
 Vue.$http = axios
 
 Vue.use(Vuetify)
+Vue.use(Momentjs)
 Vue.use(VeeValidate)
 
 Vue.config.productionTip = false
