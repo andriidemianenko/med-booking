@@ -119,7 +119,10 @@ router.get('/doctors', authCheck, async (req, res) => {
 
 router.post('/meetings', authCheck, async (req, res) => {
   try {
-    const meeting = new Meeting(req.body)
+    const meeting = new Meeting({
+      ...req.body,
+      duration: 40
+    })
     await meeting.save()
     res.json({
       message: 'Your meeting was successfully created!',
@@ -175,7 +178,8 @@ router.post('/:user/:userId/update-profile', async (req, res) => {
       updatedProfile = await Patient.updateOne({
         name: req.body.name,
         second_name: req.body.secondName,
-        phone_number: req.body.phoneNumber
+        phone_number: req.body.phoneNumber,
+        description: req.body.description
       })
     }
     res.json({ updatedProfile }).end()

@@ -8,6 +8,7 @@ const meeting = mongoose.Schema({
   cabinetNo: Number,
   date: String,
   time: String,
+  duration: Number,
   doctor_id: String,
   patient_id: String
 })

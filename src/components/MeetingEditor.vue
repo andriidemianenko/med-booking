@@ -7,67 +7,99 @@
       <v-container grid-list-md>
         <v-layout wrap>
           <v-flex xs12>
-            <v-text-field label="Date*" type="text" v-model="date" required></v-text-field>
+            <!-- <v-text-field label="Date*" type="text" v-model="date" required></v-text-field> -->
+            <pick-date @date="changeDate"></pick-date>
           </v-flex>
           <v-flex xs12>
             <!-- <v-text-field label="Time*" type="text" v-model="time" required></v-text-field> -->
             <pick-time @time="changeTime"></pick-time>
           </v-flex>
           <v-flex xs12>
-            <v-text-field label="Cabinet Number*" type="number" v-model="cabinetNo" required></v-text-field>
+            <v-text-field label="Cabinet Number*" type="number" v-model="editorFields.cabinetNo" prepend-icon="looks_one" required></v-text-field>
           </v-flex>
           <v-flex xs12>
             <v-autocomplete
               :items="doctorsNames"
               label="Doctor*"
-              v-model="doctorName"
+              v-model="editorFields.doctorName"
+              prepend-icon="perm_contact_calendar"
               required
             ></v-autocomplete>
           </v-flex>
         </v-layout>
       </v-container>
-      <small>*indicates required field</small>
+      <small class="error-msg" v-show="errorMessage.length">{{ errorMessage }}</small>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn flat @click="closeEditor">Close</v-btn>
-      <v-btn flat @click="addNewMeeting">Save</v-btn>
+      <v-btn flat @click="addNewMeeting" :disabled="disabledBtn">Save</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 <script>
 import axios from 'axios'
+import moment from 'moment'
+
 import PickTime from './PickTime.vue'
+import PickDate from './PickDate.vue'
 
 export default {
   name: 'MeetingEditor',
-  components: { PickTime },
+  components: { PickTime, PickDate },
   data() {
     return {
-      doctorName: '',
-      date: '',
-      cabinetNo: 0,
-      time: null
+      editorFields: {
+        doctorName: '',
+        date: '',
+        cabinetNo: 0,
+        time: '',
+      },
+      disabledBtn: true,
+      errorMessage: ''
     }
   },
   computed: {
     userProfileData () { return this.$store.getters.getUserProfile },
     userId () { return localStorage.getItem('userId') },
     doctors () { return this.$store.getters.getDoctorsList },
+    getCurrentTime () { return moment().format('YYYY-MM-DD HH:mm') },
     doctorsNames () { return this.doctors.map(doctor => `${doctor.name} ${doctor.second_name}`) }
+  },
+  watch: {
+    editorFields : {
+        handler (val) {
+        if (val.date.length && val.time.length && val.cabinetNo.length && val.doctorName.length) {
+          this.disabledBtn = false
+        } else {
+          this.disabledBtn = true
+        }
+        if (val.date && val.time) {
+          const time = moment(`${val.date} ${val}`, 'YYYY-MM-DD HH:mm')
+          const currentTime = moment(this.getCurrentTime, 'YYYY-MM-DD HH:mm')
+          const isCorrectTime = time.isBefore(this.currentTime)
+          if (isCorrectTime) {
+            this.errorMessage = 'You cannot set the meeting before today\'s date!'
+            this.disabledBtn = true
+          } else {
+            this.errorMessage = ''
+          }
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     addNewMeeting () {
       for (let doctor of this.doctors) {
-        if (`${doctor.name} ${doctor.second_name}` === this.doctorName.trim()) {
-          console.log(this.time)
+        if (`${doctor.name} ${doctor.second_name}` === this.editorFields.doctorName.trim()) {
           axios
             .post(`/meetings`, {
-              doctor_name: this.doctorName.trim(),
+              doctor_name: this.editorFields.doctorName.trim(),
               patient_name: `${this.userProfileData.name} ${this.userProfileData.secondName}`,
-              cabinetNo: this.cabinetNo,
-              date: this.date,
-              time: this.time,
+              cabinetNo: this.editorFields.cabinetNo,
+              date: this.editorFields.date,
+              time: this.editorFields.time,
               doctor_id: doctor._id,
               patient_id: this.userId
             })
@@ -76,24 +108,36 @@ export default {
               this.$emit('editor', false)
               this.clearEditor()
             })
+            .catch(err => {
+              console.log(err)
+            })
             break
         }
       }
     },
     clearEditor () {
-      this.doctorName = '',
-      this.cabinetNo = 0,
-      this.date = '',
-      this.time = null
+      this.editorFields.doctorName = '',
+      this.editorFields.cabinetNo = 0,
+      this.editorFields.date = '',
+      this.editorFields.time = null
     },
     changeTime (val) {
-      this.time = val
+      this.editorFields.time = val
+    },
+    changeDate (val) {
+      this.editorFields.date = val
     },
     closeEditor () {
       this.$emit('editor', false)
     }
   },
-  created() {}
+  created() {
+    console.log(this.getCurrentTime)
+  }
 }
 </script>
-
+<style scoped>
+.error-msg {
+  color: #ff0000;
+}
+</style>

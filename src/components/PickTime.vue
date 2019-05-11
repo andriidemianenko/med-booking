@@ -11,7 +11,7 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         v-model="time"
-        label="Picker in dialog"
+        label="Time*"
         prepend-icon="access_time"
         readonly
         v-on="on"
