@@ -103,7 +103,7 @@ export default {
             })
             .then(({ data }) => {
               this.$store.commit('addMeeting', data.meeting)
-              this.$emit('editor', false)
+              this.$emit('editor', { editor: false, meeting: data.meeting })
               this.clearEditor()
             })
             .catch(err => {
@@ -126,7 +126,7 @@ export default {
       this.editorFields.date = val
     },
     closeEditor () {
-      this.$emit('editor', false)
+      this.$emit('editor', { editor: false, meeting: null })
     }
   },
   created() {}

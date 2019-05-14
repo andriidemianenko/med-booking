@@ -135,8 +135,21 @@ router.post('/meetings', authCheck, async (req, res) => {
     }).end()
   }
 })
-
-router.get('/:user/:userId/meetings', async (req, res) => {
+router.put('/meetings/:meetingId', authCheck, async (req, res) => {
+  const isActive = req.body.isActive
+  try {
+    let meeting = await Meeting.findByIdAndUpdate({ _id: req.params.meetingId }, { isActive })
+    res.json({
+      message: 'Successful meeting assignment!',
+      meeting
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: `Ooops! Something went wrong...\n${err}`
+    })
+  }
+})
+router.get('/:user/:userId/meetings', authCheck, async (req, res) => {
   try {
     let meetings = null
     if (req.params.user === 'doctor') {
@@ -154,7 +167,7 @@ router.get('/:user/:userId/meetings', async (req, res) => {
   }
 })
 
-router.delete('/delete/meeting/:meetingId', async (req, res) => {
+router.delete('/delete/meeting/:meetingId', authCheck, async (req, res) => {
   try {
     await Meeting.deleteOne({ _id: req.params.meetingId })
     res.status(200).end()
@@ -165,7 +178,7 @@ router.delete('/delete/meeting/:meetingId', async (req, res) => {
   }
 })
 
-router.post('/:user/:userId/update-profile', async (req, res) => {
+router.post('/:user/:userId/update-profile', authCheck, async (req, res) => {
   let updatedProfile = null
   try {
     if (req.params.user === 'patient') {
@@ -189,6 +202,9 @@ router.post('/:user/:userId/update-profile', async (req, res) => {
       message: `Ooops! Something went wrong...\n${err}`
     }).end()
   }
+})
+router.get('/:userId/messages', authCheck, async (req, res) => {
+  
 })
 
 module.exports = router

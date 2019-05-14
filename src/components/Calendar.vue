@@ -24,8 +24,7 @@
             :style="{ top: timeToY(meeting.time) + 'px', height: minutesToPixels(meeting.duration) + 'px' }"
             class="my-meeting with-time"
             @click="open(meeting)"
-            v-html="meeting.doctor_name"
-          ></div>
+          >{{ accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</div>
         </template>
       </template>
     </v-calendar>
@@ -33,30 +32,43 @@
 </template>
 <script>
 import moment from 'moment'
+import axios from 'axios'
 
 export default {
+  props: ['accountType', 'userId'],
   data () {
-    return {}
+    return {
+      meetings: []
+    }
   },
   computed: {
     // convert the list of meetings into a map of lists keyed by date
     meetingsMap () {
       const map = {}
-      let meetings = this.meetings.slice()
-      meetings.forEach(meeting => (map[meeting.date] = map[meeting.date] || []).push(meeting))
+      let acceptedMeetings = this.meetings.filter(meeting => meeting.isActive).slice()
+      acceptedMeetings.forEach(meeting => (map[meeting.date] = map[meeting.date] || []).push(meeting))
       return map
     },
-    meetings () { return this.$store.getters.getMeetings },
     today () { return moment().format('YYYY-MM-DD') }
-  },
-  mounted () {
-    this.$refs.calendar.scrollToTime('08:00')
   },
   methods: {
     open (meeting) {
       alert(meeting.title)
+    },
+    fetchMeetings () {
+      axios
+        .get(`/${this.accountType}/${this.userId}/meetings`)
+        .then(({ data }) => {
+          this.meetings = data.meetings
+        })
     }
-  }
+  },
+  created () {
+    this.fetchMeetings()
+  },
+  mounted () {
+    this.$refs.calendar.scrollToTime('08:00')
+  },
 }
 </script>
 <style scoped>

@@ -1,10 +1,10 @@
 <template>
   <v-layout wrap>
-    <v-dialog v-model="editor" width="600">
+    <v-dialog v-if="accountType === 'patient'" v-model="editor" width="600">
       <template v-slot:activator="{ on }">
         <v-btn color="green lighten-2" dark v-on="on">ADD NEW MEETING</v-btn>
       </template>
-      <meeting-editor @editor="close"></meeting-editor>
+      <meeting-editor @editor="editorData"></meeting-editor>
     </v-dialog>
     <v-container>
       <v-list three-line v-if="meetings.length">
@@ -17,11 +17,14 @@
             </v-list-tile-avatar> -->
 
             <v-list-tile-content>
-              <v-list-tile-title>{{ userProfileData.accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</v-list-tile-title>
+              <v-list-tile-title>{{ accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</v-list-tile-title>
               <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}, cabinet: {{ meeting.cabinetNo }}</v-list-tile-sub-title>
-              <v-list-tile-sub-title :class="{ 'meeting-disabled': !meeting.isActive, 'meeting-active': meeting.isActive }"><b>STATUS:</b> {{ meeting.isActive ? 'Accepted!' : 'Yet not accepted...' }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title :class="{ 'meeting-disabled': !meeting.isActive, 'meeting-active': meeting.isActive }">
+                <b>STATUS:</b> {{ meeting.isActive ? 'Accepted!' : 'Yet not accepted...' }}
+              </v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
+              <v-btn v-if="accountType === 'doctor' && !meeting.isActive" @click="acceptMeeting(meeting)" color="success">ACCEPT</v-btn>
               <v-btn @click="cancelMeeting(meeting)" color="error">CANCEL</v-btn>
             </v-list-tile-action>
           </v-list-tile>
@@ -37,29 +40,51 @@ import axios from 'axios'
 
 export default {
   components: { MeetingEditor },
+  props: ['accountType', 'userId'],
   data() {
     return {
-      editor: false
+      editor: false,
+      meetings: []
     }
   },
   computed: {
     userProfileData () { return this.$store.getters.getUserProfile },
-    meetings () { return this.$store.getters.getMeetings },
-    userId () { return localStorage.getItem('userId') }
+    // meetings () { return this.$store.getters.getMeetings }
   },
   methods: {
-    close (val) {
-      this.editor = val
+    editorData (val) {
+      this.editor = val.editor
+      if (val.meeting) {
+        this.meetings.push(val.meeting)
+      }
     },
-    cancelMeeting (meeting) {
+    cancelMeeting (choosenMeeting) {
       axios
-        .delete(`/delete/meeting/${meeting._id}`)
+        .delete(`/delete/meeting/${choosenMeeting._id}`)
         .then(({ data }) => {
-          this.$store.commit('cancelMeeting', meeting._id)
+          this.meetings = this.meetings.filter(meeting => meeting._id !== choosenMeeting._id)
+        })
+    },
+    acceptMeeting (choosenMeeting) {
+      axios
+        .put(`/meetings/${choosenMeeting._id}`, {
+          isActive: true
+        })
+        .then(({ data }) => {
+          console.log(data)
+        })
+    },
+    fetchMeetings () {
+      axios
+        .get(`/${this.accountType}/${this.userId}/meetings`)
+        .then(({ data }) => {
+          this.meetings = data.meetings
         })
     }
   },
-  mounted () {}
+  created () {
+    this.fetchMeetings()
+  }
 }
 </script>
 <style scoped>

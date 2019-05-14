@@ -34,7 +34,7 @@
     </v-toolbar>
     <v-content>
       <v-container fluid>
-        <router-view></router-view>
+        <router-view :accountType="$route.params.user" :userId="$route.params.userId"></router-view>
       </v-container>
     </v-content>
   </v-layout>
@@ -134,20 +134,12 @@ export default {
       const pageRegExp = /[\s\S]*\/(doctor|patient)\/[\s\S]+?\/(\w*)?/
       const currentPage = currentRoute.match(pageRegExp)[2]
       this.currentPage = currentPage ? currentPage : ''
-    },
-    fetchMeetings () {
-      axios
-        .get(`/${this.profileData.accountType}/${this.userId}/meetings`)
-        .then(({ data }) => {
-          this.$store.commit('setUserMeetings', data.meetings)
-        })
     }
   },
   created () {
-    this.setPageTitle()
     this.fetchUserProfile()
+    this.setPageTitle()
     this.fetchDoctorsList()
-    this.fetchMeetings()
   }
 }
 </script>
