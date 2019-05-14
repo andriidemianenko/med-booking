@@ -8,6 +8,7 @@ import MeetingsList from './components/MeetingsList.vue'
 import Calendar from './components/Calendar.vue'
 import Profile from './components/Profile.vue'
 import DoctorsList from './components/DoctorsList.vue'
+import Inbox from './views/Inbox.vue'
 
 Vue.use(Router)
 
@@ -50,6 +51,10 @@ export default new Router({
         {
           path: 'doctors',
           component: DoctorsList
+        },
+        {
+          path: 'inbox',
+          component: Inbox
         }
       ]
     }

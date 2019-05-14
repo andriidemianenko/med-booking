@@ -10,7 +10,8 @@ const meeting = mongoose.Schema({
   time: String,
   duration: Number,
   doctor_id: String,
-  patient_id: String
+  patient_id: String,
+  isActive: Boolean
 })
 
 module.exports = mongoose.model('meeting', meeting)

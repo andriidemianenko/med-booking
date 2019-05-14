@@ -121,12 +121,13 @@ router.post('/meetings', authCheck, async (req, res) => {
   try {
     const meeting = new Meeting({
       ...req.body,
-      duration: 40
+      duration: 40,
+      isActive: false
     })
-    await meeting.save()
+    let meetingResponse = await meeting.save()
     res.json({
       message: 'Your meeting was successfully created!',
-      meeting: req.body
+      meeting: meetingResponse
     }).end()
   } catch (err) {
     res.status(500).json({

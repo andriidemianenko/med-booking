@@ -7,17 +7,19 @@
       <meeting-editor @editor="close"></meeting-editor>
     </v-dialog>
     <v-container>
-      <v-list two-line v-if="meetings.length">
-        <template v-for="meeting in meetings">
-          <!-- <v-divider v-else-if="item.divider" :key="index" :inset="item.inset"></v-divider> -->
-          <v-list-tile :key="meeting.id" avatar @click>
-            <v-list-tile-avatar>
-              <!-- <img src="../../public/favicon.ico"> -->
-            </v-list-tile-avatar>
+      <v-list three-line v-if="meetings.length">
+        <template v-for="(meeting, index) in meetings">
+          <v-divider v-if="index !== 0" :key="index"></v-divider>
+          <!-- <v-list-tile :key="meeting.id" avatar @click> -->
+          <v-list-tile :key="meeting.id" @click>
+            <!-- <v-list-tile-avatar>
+              <img src="../../public/favicon.ico">
+            </v-list-tile-avatar> -->
 
             <v-list-tile-content>
               <v-list-tile-title>{{ userProfileData.accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</v-list-tile-title>
               <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}, cabinet: {{ meeting.cabinetNo }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title :class="{ 'meeting-disabled': !meeting.isActive, 'meeting-active': meeting.isActive }"><b>STATUS:</b> {{ meeting.isActive ? 'Accepted!' : 'Yet not accepted...' }}</v-list-tile-sub-title>
             </v-list-tile-content>
             <v-list-tile-action>
               <v-btn @click="cancelMeeting(meeting)" color="error">CANCEL</v-btn>
@@ -60,4 +62,13 @@ export default {
   mounted () {}
 }
 </script>
+<style scoped>
+.meeting-disabled {
+  color: #ff5252 !important;
+}
+.meeting-active {
+  color: #81c784 !important;
+}
+</style>
+
 

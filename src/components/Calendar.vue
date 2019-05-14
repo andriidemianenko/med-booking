@@ -20,11 +20,11 @@
           <!-- timed meetings -->
           <div
             v-if="meeting.time"
-            :key="meeting.title"
+            :key="meeting._id"
             :style="{ top: timeToY(meeting.time) + 'px', height: minutesToPixels(meeting.duration) + 'px' }"
             class="my-meeting with-time"
             @click="open(meeting)"
-            v-html="meeting.title"
+            v-html="meeting.doctor_name"
           ></div>
         </template>
       </template>

@@ -7,11 +7,9 @@
       <v-container grid-list-md>
         <v-layout wrap>
           <v-flex xs12>
-            <!-- <v-text-field label="Date*" type="text" v-model="date" required></v-text-field> -->
             <pick-date @date="changeDate"></pick-date>
           </v-flex>
           <v-flex xs12>
-            <!-- <v-text-field label="Time*" type="text" v-model="time" required></v-text-field> -->
             <pick-time @time="changeTime"></pick-time>
           </v-flex>
           <v-flex xs12>
@@ -131,9 +129,7 @@ export default {
       this.$emit('editor', false)
     }
   },
-  created() {
-    console.log(this.getCurrentTime)
-  }
+  created() {}
 }
 </script>
 <style scoped>

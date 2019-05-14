@@ -69,6 +69,11 @@ export default {
         title: 'List of Doctors',
         icon: 'how_to_reg',
         link: 'doctors'
+      },
+      {
+        title: 'My Inbox',
+        icon: 'email',
+        link: 'inbox'
       }]
     }
   },
@@ -111,7 +116,8 @@ export default {
         })
     },
     fetchDoctorsList () {
-      axios.get(`/doctors`)
+      axios
+        .get(`/doctors`)
         .then(({ data }) => {
           this.$store.commit('setDoctorsList', data.doctors)
         })
