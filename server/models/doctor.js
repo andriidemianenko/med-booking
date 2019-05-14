@@ -8,7 +8,8 @@ const doctor = mongoose.Schema({
   second_name: String,
   phone_number: Number,
   qualification: String,
-  password: String
+  password: String,
+  cabinetNo: String
 })
 
 module.exports = mongoose.model('doctor', doctor)

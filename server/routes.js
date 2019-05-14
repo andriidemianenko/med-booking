@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const Patient = require('./models/patient')
 const Doctor = require('./models/doctor')
 const Meeting = require('./models/meeting')
+const Message = require('./models/message')
 
 const authCheck = require('./modules/authCheck')
 
@@ -119,6 +120,7 @@ router.get('/doctors', authCheck, async (req, res) => {
 
 router.post('/meetings', authCheck, async (req, res) => {
   try {
+    console.log(req.body)
     const meeting = new Meeting({
       ...req.body,
       duration: 40,
@@ -203,8 +205,37 @@ router.post('/:user/:userId/update-profile', authCheck, async (req, res) => {
     }).end()
   }
 })
-router.get('/:userId/messages', authCheck, async (req, res) => {
-  
+
+router.post('/message/from/:senderId/to/:receiverId', authCheck, async (req, res) => {
+  try {
+    const sender = (await Patient.findOne({ _id: req.params.senderId })) || (await Doctor.findOne({ _id: req.params.senderId }))
+    const message = new Message({
+      ...req.body,
+      sender_name: `${sender.name} ${sender.second_name}`,
+      receiver_id: req.params.receiverId,
+      sender_id: req.params.senderId
+    })
+    await message.save()
+    res.json({
+      message: 'Message succesfully send!',
+      message_sent: true
+    }).end()
+  } catch (err) {
+    res.status(500).json({
+      message: `Ooops! Something went wrong...\n${err}`
+    }).end()
+  }
+})
+
+router.get(`/:userId/messages/`, authCheck, async (req, res) => {
+  try {
+    const messages = await Message.find({ receiver_id: req.params.receiverId })
+    res.json({ messages }).end()
+  } catch (err) {
+    res.status(500).json({
+      message: `Ooops! Something went wrong...\n${err}`
+    }).end()
+  }
 })
 
 module.exports = router

@@ -18,7 +18,7 @@
 
             <v-list-tile-content>
               <v-list-tile-title>{{ accountType === 'doctor' ? meeting.patient_name : meeting.doctor_name }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}, cabinet: {{ meeting.cabinetNo }}</v-list-tile-sub-title>
+              <v-list-tile-sub-title>{{ meeting.date }}, {{ meeting.time }}</v-list-tile-sub-title>
               <v-list-tile-sub-title :class="{ 'meeting-disabled': !meeting.isActive, 'meeting-active': meeting.isActive }">
                 <b>STATUS:</b> {{ meeting.isActive ? 'Accepted!' : 'Yet not accepted...' }}
               </v-list-tile-sub-title>
@@ -30,6 +30,7 @@
           </v-list-tile>
         </template>
       </v-list>
+      <h1 v-else>There no meetings assigned for you!</h1>
     </v-container>
   </v-layout>
 </template>
@@ -63,6 +64,7 @@ export default {
         .delete(`/delete/meeting/${choosenMeeting._id}`)
         .then(({ data }) => {
           this.meetings = this.meetings.filter(meeting => meeting._id !== choosenMeeting._id)
+          this.sendMessage('cancel', choosenMeeting)
         })
     },
     acceptMeeting (choosenMeeting) {
@@ -71,8 +73,37 @@ export default {
           isActive: true
         })
         .then(({ data }) => {
-          console.log(data)
+          this.meetings[this.meetings.indexOf(choosenMeeting)].isActive = true
+          this.sendMessage('accept', choosenMeeting)
         })
+    },
+    sendMessage (messageType, meeting) {
+      const messageEndpoint = `/message/from/${this.userId}/to/${this.accountType === 'doctor' ? meeting.patient_id : meeting.doctor_id}`
+      if (this.accountType === 'doctor' && messageType === 'cancel') {
+        const message = `Sorry, but i can\'t accept this meeting. Change time or call me for more information: ${this.userProfileData.telephoneNumber}.`
+        axios
+          .post(messageEndpoint, {
+            message,
+            meeting_id: meeting.id,
+            type: 'cancel'
+          })
+      } else if (this.accountType === 'doctor' && messageType === 'accept') {
+        const message = `Hello, i\'d be happy to see you in my cabinet on specified time!`
+        axios
+          .post(messageEndpoint, {
+            message,
+            meeting_id: meeting.id,
+            type: 'accept'
+          })
+      } else if (this.accountType === 'patient' && messageType === 'cancel') {
+        const message = `I am sorry, but my plans have changed...`
+        axios
+          .post(messageEndpoint, {
+            message,
+            meeting_id: meeting.id,
+            type: 'cancel'
+          })
+      }
     },
     fetchMeetings () {
       axios

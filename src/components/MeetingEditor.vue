@@ -13,9 +13,6 @@
             <pick-time @time="changeTime"></pick-time>
           </v-flex>
           <v-flex xs12>
-            <v-text-field label="Cabinet Number*" type="number" v-model="editorFields.cabinetNo" prepend-icon="looks_one" required></v-text-field>
-          </v-flex>
-          <v-flex xs12>
             <v-autocomplete
               :items="doctorsNames"
               label="Doctor*"
@@ -23,6 +20,15 @@
               prepend-icon="perm_contact_calendar"
               required
             ></v-autocomplete>
+          </v-flex>
+          <v-flex xs12>
+            <v-textarea
+              name="description"
+              box
+              height="120"
+              label="Describe the reason of the meeting"
+              v-model="editorFields.description"
+            ></v-textarea>
           </v-flex>
         </v-layout>
       </v-container>
@@ -50,7 +56,7 @@ export default {
       editorFields: {
         doctorName: '',
         date: '',
-        cabinetNo: 0,
+        description: '',
         time: '',
       },
       disabledBtn: true,
@@ -67,7 +73,7 @@ export default {
   watch: {
     editorFields : {
         handler (val) {
-        if (val.date.length && val.time.length && val.cabinetNo.length && val.doctorName.length) {
+        if (val.date.length && val.time.length && val.description.length && val.doctorName.length) {
           this.disabledBtn = false
         } else {
           this.disabledBtn = true
@@ -95,14 +101,13 @@ export default {
             .post(`/meetings`, {
               doctor_name: this.editorFields.doctorName.trim(),
               patient_name: `${this.userProfileData.name} ${this.userProfileData.secondName}`,
-              cabinetNo: this.editorFields.cabinetNo,
               date: this.editorFields.date,
+              description: this.editorFields.description,
               time: this.editorFields.time,
               doctor_id: doctor._id,
               patient_id: this.userId
             })
             .then(({ data }) => {
-              this.$store.commit('addMeeting', data.meeting)
               this.$emit('editor', { editor: false, meeting: data.meeting })
               this.clearEditor()
             })
@@ -115,7 +120,7 @@ export default {
     },
     clearEditor () {
       this.editorFields.doctorName = '',
-      this.editorFields.cabinetNo = 0,
+      this.editorFields.description = '',
       this.editorFields.date = '',
       this.editorFields.time = null
     },

@@ -60,6 +60,13 @@
             type="text"
           ></v-text-field>
           <v-text-field
+            v-if="userAccount.doctor"
+            name="cabinetNo"
+            label="Cabinet Number"
+            v-model="cabinetNo"
+            type="text"
+          ></v-text-field>
+          <v-text-field
             v-if="userAccount.patient"
             name="cardNumber"
             label="Enter Your MedCard Number"
@@ -96,6 +103,7 @@ export default {
       qualification: '',
       cardNumber: 0,
       phoneNumber: 0,
+      cabinetNo: '',
       secondName: '',
       userAccount: {
         doctor: false,
