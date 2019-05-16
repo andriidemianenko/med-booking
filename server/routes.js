@@ -227,7 +227,7 @@ router.post('/message/from/:senderId/to/:receiverId', authCheck, async (req, res
   }
 })
 
-router.get(`/:userId/messages/`, authCheck, async (req, res) => {
+router.get(`/:receiverId/inbox/`, authCheck, async (req, res) => {
   try {
     const messages = await Message.find({ receiver_id: req.params.receiverId })
     res.json({ messages }).end()

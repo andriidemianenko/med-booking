@@ -80,7 +80,7 @@ export default {
     sendMessage (messageType, meeting) {
       const messageEndpoint = `/message/from/${this.userId}/to/${this.accountType === 'doctor' ? meeting.patient_id : meeting.doctor_id}`
       if (this.accountType === 'doctor' && messageType === 'cancel') {
-        const message = `Sorry, but i can\'t accept this meeting. Change time or call me for more information: ${this.userProfileData.telephoneNumber}.`
+        const message = `Sorry, but i can\'t accept this meeting. Change time or call me for more information: ${this.userProfileData.phoneNumber}.`
         axios
           .post(messageEndpoint, {
             message,
