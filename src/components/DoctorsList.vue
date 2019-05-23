@@ -6,7 +6,7 @@
           <!-- <v-divider v-else-if="item.divider" :key="index" :inset="item.inset"></v-divider> -->
           <v-list-tile :key="doctor._id" avatar @click>
             <v-list-tile-avatar>
-              <!-- <img src="../../public/favicon.ico"> -->
+              <img src="https://s3.ap-south-1.amazonaws.com/doctorinsta-com/doctorinsta-front/others.png">
             </v-list-tile-avatar>
 
             <v-list-tile-content>

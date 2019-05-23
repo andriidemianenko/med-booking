@@ -73,24 +73,24 @@ export default {
   watch: {
     editorFields : {
         handler (val) {
-        if (val.date.length && val.time.length && val.description.length && val.doctorName.length) {
-          this.disabledBtn = false
-        } else {
-          this.disabledBtn = true
-        }
-        if (val.date && val.time) {
-          const time = moment(`${val.date} ${val}`, 'YYYY-MM-DD HH:mm')
-          const currentTime = moment(this.getCurrentTime, 'YYYY-MM-DD HH:mm')
-          const isCorrectTime = time.isBefore(this.currentTime)
-          if (isCorrectTime) {
-            this.errorMessage = 'You cannot set the meeting before today\'s date!'
-            this.disabledBtn = true
+          if (val.date.length && val.time.length && val.description.length && val.doctorName.length) {
+            this.disabledBtn = false
           } else {
-            this.errorMessage = ''
+            this.disabledBtn = true
           }
-        }
-      },
-      deep: true
+          if (val.date && val.time) {
+            const time = moment(`${val.date} ${val}`, 'YYYY-MM-DD HH:mm')
+            const currentTime = moment(this.getCurrentTime, 'YYYY-MM-DD HH:mm')
+            const isCorrectTime = time.isBefore(this.currentTime)
+            if (isCorrectTime) {
+              this.errorMessage = 'You cannot set the meeting before today\'s date!'
+              this.disabledBtn = true
+            } else {
+              this.errorMessage = ''
+            }
+          }
+        },
+        deep: true
     }
   },
   methods: {
@@ -109,10 +109,12 @@ export default {
             })
             .then(({ data }) => {
               this.$emit('editor', { editor: false, meeting: data.meeting })
+              this.$store.commit('addMeeting', data.meeting)
               this.clearEditor()
             })
             .catch(err => {
               console.log(err)
+              this.clearEditor()
             })
             break
         }
@@ -122,7 +124,7 @@ export default {
       this.editorFields.doctorName = '',
       this.editorFields.description = '',
       this.editorFields.date = '',
-      this.editorFields.time = null
+      this.editorFields.time = ''
     },
     changeTime (val) {
       this.editorFields.time = val
@@ -133,8 +135,7 @@ export default {
     closeEditor () {
       this.$emit('editor', { editor: false, meeting: null })
     }
-  },
-  created() {}
+  }
 }
 </script>
 <style scoped>

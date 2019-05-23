@@ -4,7 +4,8 @@
       <v-list class="pa-1">
         <v-list-tile avatar>
           <v-list-tile-avatar>
-            <img src="https://randomuser.me/api/portraits/men/85.jpg">
+            <img v-if="accountType === 'doctor'" src="https://s3.ap-south-1.amazonaws.com/doctorinsta-com/doctorinsta-front/others.png">
+            <img v-else src="https://randomuser.me/api/portraits/men/85.jpg">
           </v-list-tile-avatar>
 
           <v-list-tile-content>

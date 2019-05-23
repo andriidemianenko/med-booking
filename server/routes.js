@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
       },
       secret,
       {
-        expiresIn: '30m'
+        expiresIn: '5h'
       })
       await res.status(200).append('auth_token', JWToken).json({
         message: 'welcome back',
@@ -120,7 +120,6 @@ router.get('/doctors', authCheck, async (req, res) => {
 
 router.post('/meetings', authCheck, async (req, res) => {
   try {
-    console.log(req.body)
     const meeting = new Meeting({
       ...req.body,
       duration: 40,

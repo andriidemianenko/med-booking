@@ -6,11 +6,13 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     userProfile: {},
-    doctors: []
+    doctors: [],
+    meetings: []
   },
   getters: {
     getUserProfile: state => state.userProfile,
-    getDoctorsList: state => state.doctors
+    getDoctorsList: state => state.doctors,
+    getMeetings: state => state.meetings
   },
   mutations: {
     setUserProfile: (state, payload) => {
@@ -18,6 +20,15 @@ const store = new Vuex.Store({
     },
     setDoctorsList: (state, doctors) => {
       state.doctors = doctors
+    },
+    setMeetings: (state, meetings) => {
+      state.meetings = meetings
+    },
+    addMeeting: (state, meeting) => {
+      state.meetings.push(meeting)
+    },
+    deleteMeeting: (state, meetingId) => {
+      state.meetings = state.meetings.filter(meeting => meeting._id !== meetingId)
     },
     updateProfile: (state, payload) => {
       state.userProfile.name = payload.name

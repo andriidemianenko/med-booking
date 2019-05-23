@@ -30,7 +30,7 @@ export default {
   name: 'PickTime',
   data() {
     return {
-      time: null,
+      time: '',
       timePicker: false
     }
   },
