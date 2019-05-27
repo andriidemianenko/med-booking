@@ -1,6 +1,6 @@
 <template>
   <v-layout wrap>
-     <v-snackbar v-model="snackbar.isActive" :color="snackbar.color" timeout="3000">
+     <v-snackbar v-model="snackbar.isActive" :color="snackbar.color" :timeout="3000">
         {{ snackbar.text }}
         <v-btn dark flat @click="snackbar = false">
           Close

@@ -22,8 +22,8 @@ const sha512 = password => {
 router.post('/login', async (req, res) => {
   const incPassword = sha512(req.body.password)
   let user = (await Doctor.findOne({ email: req.body.email })) || (await Patient.findOne({ email: req.body.email }))
-  const account = user.qualification ? 'doctor' : 'patient'
   if (user) {
+    const account = user.qualification ? 'doctor' : 'patient'
     if (user.password === incPassword) {
       const JWToken = jwt.sign({
         email: user.email,

@@ -11,7 +11,7 @@
       </v-flex>
       <v-flex xs5>
         <v-flex xs12>
-          <v-text-field v-model="profileFields.cardNumber" label="Your Card Number"></v-text-field>
+          <v-text-field v-model="profileFields.cardNumber" v-if="accountType === 'patient'" label="Your Card Number"></v-text-field>
         </v-flex>
         <v-flex xs12>
           <v-text-field v-model="profileFields.phoneNumber" label="Your Telephone Number"></v-text-field>
@@ -28,6 +28,7 @@ import axios from 'axios'
 import { setTimeout } from 'timers';
 
 export default {
+  props: ['accountType'],
   data() {
     return {
       profileFields: {

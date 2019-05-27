@@ -15,15 +15,15 @@
 
 <script>
 export default {
-  name: "AuthPage",
+  name: 'AuthPage',
   data() {
     return {
-      msg: ""
-    };
+      msg: ''
+    }
   },
   methods: {},
   created() {}
-};
+}
 </script>
 <style scoped>
 .f-justify-center {
