@@ -60,8 +60,6 @@ export default {
       })
     },
     openMeetingInfo (meetingInfo) {
-      console.log(meetingInfo)
-      console.log(this.messages)
       this.choosenMeeting = meetingInfo
       this.messageDialog = true
     }

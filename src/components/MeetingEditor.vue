@@ -113,7 +113,6 @@ export default {
               this.clearEditor()
             })
             .catch(err => {
-              console.log(err)
               this.clearEditor()
             })
             break
